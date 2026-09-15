@@ -21,7 +21,8 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
+  min-height: 100%;
+  background: #030503;
   color: var(--text);
   font-family: "IBM Plex Mono", ui-monospace, monospace;
   background-image: repeating-linear-gradient(0deg, var(--scan) 0px, transparent 1px, transparent 3px);
