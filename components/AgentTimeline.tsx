@@ -29,7 +29,7 @@ export default function AgentTimeline({ items }: { items: TimelineItem[] }) {
       {items.map((item, i) => {
         const agent = AGENTS[item.agent];
         const dotColor =
-          item.status === "running" ? "var(--accent)" : item.status === "done" ? "var(--accent)" : "var(--error)";
+          item.status === "running" ? "var(--accent)" : item.status === "done" ? "var(--success)" : "var(--error)";
         const symbol = item.status === "running" ? "▸" : item.status === "done" ? "✓" : "✕";
         return (
           <li
