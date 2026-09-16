@@ -24,7 +24,7 @@ export default function ZipDownload({ files }: { files: Record<string, string> }
       disabled={disabled}
       style={{
         background: disabled ? "var(--panel-raised)" : "var(--accent)",
-        color: disabled ? "var(--text-muted)" : "#02150a",
+        color: disabled ? "var(--text-muted)" : "#2a1509",
         border: "1px solid var(--border)",
         padding: "7px 14px",
         fontWeight: 600,
