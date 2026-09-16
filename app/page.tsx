@@ -97,161 +97,201 @@ export default function Home() {
       setMessages((m) => [...m, { role: "system", text: `error: ${evt.message}` }]);
     }
   }
+  const started = messages.length > 0;
 
-  return (
-    <div style={{ minHeight: "100vh", padding: "20px 12px", display: "flex", justifyContent: "center" }}>
-      <div
+  const inputBar = (
+    <div
+      style={{
+        background: "var(--panel)",
+        border: "1px solid var(--border)",
+        borderRadius: 22,
+        boxShadow: "0 8px 24px rgba(32,26,18,0.06)",
+        padding: "14px 16px 10px",
+      }}
+    >
+      <input
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && send()}
+        placeholder="Buatkan landing page untuk startup saya..."
         style={{
           width: "100%",
-          maxWidth: 720,
-          border: "1px solid var(--border)",
-          background: "var(--panel)",
-          boxShadow: "0 0 60px rgba(57,255,136,0.06), 0 0 0 1px rgba(57,255,136,0.02)",
+          border: "none",
+          outline: "none",
+          background: "transparent",
+          color: "var(--text)",
+          fontSize: 15,
+          padding: "4px 2px 10px",
         }}
-      >
-        {/* title bar — kasih frame biar keliatan "jendela", bukan halaman kosong */}
-        <div
+      />
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <span style={{ color: "var(--text-muted)", fontSize: 18 }}>+</span>
+        <span
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 8,
-            padding: "10px 14px",
-            borderBottom: "1px solid var(--border)",
-            background: "var(--panel-raised)",
+            gap: 5,
+            fontSize: 13,
+            fontWeight: 600,
+            color: "var(--text)",
           }}
         >
-          <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#ff6b6b" }} />
-          <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#f5c56b" }} />
-          <span style={{ width: 9, height: 9, borderRadius: "50%", background: "var(--accent)" }} />
-          <span style={{ marginLeft: 8, fontSize: 12, color: "var(--text-muted)" }}>
-            studio — multi-agent coding pipeline
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent)" }} />
+          10 agents
+        </span>
+        <span style={{ fontSize: 13, color: "var(--text-muted)" }}>groq · openrouter · gemini</span>
+        <button
+          onClick={send}
+          disabled={busy || !input.trim()}
+          style={{
+            marginLeft: "auto",
+            width: 34,
+            height: 34,
+            borderRadius: "50%",
+            border: "none",
+            background: busy || !input.trim() ? "var(--border)" : "var(--accent)",
+            color: "#fff",
+            fontSize: 16,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          aria-label="Kirim"
+        >
+          {busy ? "⋯" : "↑"}
+        </button>
+      </div>
+    </div>
+  );
+
+  if (!started) {
+    // Layar awal — hero terpusat, mirip referensi
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          background:
+            "radial-gradient(60% 40% at 50% 100%, rgba(217,119,87,0.16), transparent 70%), var(--bg)",
+        }}
+      >
+        <header style={{ display: "flex", alignItems: "center", padding: "18px 20px" }}>
+          <strong style={{ fontSize: 15 }}>studio</strong>
+          <span style={{ marginLeft: 6, fontSize: 13, color: "var(--text-muted)" }}>
+            multi-agent coding
           </span>
+        </header>
+
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "40px 20px",
+          }}
+        >
+          <h1 style={{ fontSize: 40, fontWeight: 800, margin: "0 0 10px", letterSpacing: -1 }}>
+            studio<span style={{ color: "var(--accent)" }}>.</span>
+          </h1>
+          <p style={{ fontSize: 19, fontWeight: 700, margin: "0 0 28px" }}>Mari membangun sesuatu.</p>
+
+          <div style={{ width: "100%", maxWidth: 560 }}>
+            {inputBar}
+            <p style={{ marginTop: 10, fontSize: 12.5, color: "var(--text-muted)", textAlign: "center" }}>
+              📎 lampirkan referensi, atau minta scrape sebuah URL
+            </p>
+          </div>
         </div>
+      </div>
+    );
+  }
 
-        <div style={{ padding: 16 }}>
-          <p style={{ margin: "0 0 14px", fontSize: 11, color: "var(--text-muted)" }}>
-            10 agent (gemini / openrouter / groq) — router → architect → ui/ux ⇄ anti-slop → css → js →
-            scraper → qa → security → assembler
-          </p>
+  // Layar aktif — percakapan + workbench, input pindah ke bawah
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <header
+        style={{
+          padding: "14px 20px",
+          borderBottom: "1px solid var(--border)",
+          background: "var(--panel)",
+        }}
+      >
+        <strong style={{ fontSize: 14 }}>studio</strong>
+        <span style={{ marginLeft: 8, fontSize: 12, color: "var(--text-muted)" }}>
+          router → architect → ui/ux ⇄ anti-slop → css → js → scraper → qa → security → assembler
+        </span>
+      </header>
 
-          {/* chat log — dibatasi tinggi & dibingkai, bukan flex kosong sepanjang viewport */}
+      <div className="scrollbar-thin" style={{ flex: 1, overflow: "auto", padding: 20, maxWidth: 640, width: "100%", margin: "0 auto" }}>
+        {messages.map((m, i) => (
           <div
-            className="scrollbar-thin"
+            key={i}
             style={{
-              border: "1px solid var(--border)",
-              background: "var(--bg)",
-              minHeight: 90,
-              maxHeight: "42vh",
-              overflow: "auto",
-              padding: 12,
+              marginBottom: 10,
+              padding: "9px 14px",
+              borderRadius: 14,
+              maxWidth: "85%",
+              marginLeft: m.role === "user" ? "auto" : 0,
+              background: m.role === "user" ? "var(--accent)" : "var(--panel)",
+              border: m.role === "user" ? "none" : "1px solid var(--border)",
+              color: m.role === "user" ? "#fff" : "var(--text)",
+              fontSize: 13.5,
             }}
           >
-            {messages.length === 0 && (
-              <p style={{ color: "var(--text-muted)", fontSize: 13, margin: 0 }}>
-                &gt; contoh: &quot;buatkan landing page toko kopi, gaya minimal&quot; atau &quot;scrape harga
-                produk dari url X, tampilkan tabel&quot;
-              </p>
-            )}
-            {messages.map((m, i) => (
-              <div
-                key={i}
-                style={{
-                  marginBottom: 8,
-                  padding: "6px 10px",
-                  maxWidth: "88%",
-                  marginLeft: m.role === "user" ? "auto" : 0,
-                  background: m.role === "user" ? "var(--accent)" : "var(--panel-raised)",
-                  color: m.role === "user" ? "#02150a" : "var(--text)",
-                  border: m.role === "user" ? "none" : "1px solid var(--border)",
-                  fontSize: 12.5,
-                }}
-              >
-                {m.role === "user" ? "> " : ""}
-                {m.text}
-              </div>
-            ))}
+            {m.text}
           </div>
+        ))}
 
-          {/* input — nempel langsung di bawah chat log, gak nunggu didorong flex 100vh */}
-          <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && send()}
-              placeholder="ketik brief project..."
-              style={{
-                flex: 1,
-                background: "var(--panel-raised)",
-                border: "1px solid var(--border)",
-                padding: "9px 10px",
-                color: "var(--text)",
-                fontSize: 13,
-              }}
-            />
+        <div style={{ display: "flex", gap: 4, marginTop: 20, borderBottom: "1px solid var(--border)" }}>
+          {(["workbench", "code", "preview"] as const).map((t) => (
             <button
-              onClick={send}
-              disabled={busy}
+              key={t}
+              onClick={() => setTab(t)}
               style={{
-                background: busy ? "var(--panel-raised)" : "var(--accent)",
-                color: busy ? "var(--text-muted)" : "#02150a",
-                border: "1px solid var(--border)",
-                padding: "9px 16px",
-                fontWeight: 700,
-                fontSize: 12,
+                background: "transparent",
+                border: "none",
+                borderBottom: tab === t ? "2px solid var(--accent)" : "2px solid transparent",
+                color: tab === t ? "var(--text)" : "var(--text-muted)",
+                padding: "6px 8px",
+                fontSize: 13,
+                fontWeight: 600,
               }}
             >
-              {busy ? "..." : "run"}
+              {t === "workbench" ? "Workbench" : t === "code" ? "Kode" : "Preview"}
             </button>
+          ))}
+          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center" }}>
+            <ZipDownload files={Object.fromEntries(files.map((f) => [f.filename, f.content]))} />
           </div>
-
-          <div style={{ display: "flex", gap: 4, marginTop: 20, borderBottom: "1px solid var(--border)" }}>
-            {(["workbench", "code", "preview"] as const).map((t) => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  borderBottom: tab === t ? "2px solid var(--accent)" : "2px solid transparent",
-                  color: tab === t ? "var(--text)" : "var(--text-muted)",
-                  padding: "6px 4px",
-                  fontSize: 12,
-                  fontWeight: 600,
-                }}
-              >
-                [{t}]
-              </button>
-            ))}
-            <div style={{ marginLeft: "auto", display: "flex", alignItems: "center" }}>
-              <ZipDownload files={Object.fromEntries(files.map((f) => [f.filename, f.content]))} />
-            </div>
-          </div>
-
-          {/* isi tab — dibingkai juga biar konsisten sama chat log di atas */}
-          <div
-            style={{
-              border: "1px solid var(--border)",
-              background: "var(--bg)",
-              padding: 14,
-              marginTop: 12,
-              minHeight: 120,
-            }}
-          >
-            {tab === "workbench" && <AgentTimeline items={timeline} />}
-            {tab === "code" && <CodeViewer files={files} />}
-            {tab === "preview" && <PreviewFrame html={finalHtml} />}
-          </div>
-
-          {pythonSnippet && (
-            <div style={{ marginTop: 14 }}>
-              <PythonRunner code={pythonSnippet} />
-            </div>
-          )}
-
-          <p style={{ margin: "16px 0 0", fontSize: 10, color: "var(--text-muted)", textAlign: "center" }}>
-            gemini · openrouter · groq — api key aman di server, gak pernah ke browser
-          </p>
         </div>
+
+        <div
+          style={{
+            border: "1px solid var(--border)",
+            background: "var(--panel)",
+            borderRadius: 12,
+            padding: 16,
+            marginTop: 14,
+            minHeight: 120,
+          }}
+        >
+          {tab === "workbench" && <AgentTimeline items={timeline} />}
+          {tab === "code" && <CodeViewer files={files} />}
+          {tab === "preview" && <PreviewFrame html={finalHtml} />}
+        </div>
+
+        {pythonSnippet && (
+          <div style={{ marginTop: 14 }}>
+            <PythonRunner code={pythonSnippet} />
+          </div>
+        )}
+      </div>
+
+      <div style={{ padding: "14px 20px 20px", background: "var(--bg)", borderTop: "1px solid var(--border)" }}>
+        <div style={{ maxWidth: 640, margin: "0 auto" }}>{inputBar}</div>
       </div>
     </div>
   );
