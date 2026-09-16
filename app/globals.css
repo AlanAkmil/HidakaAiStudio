@@ -1,16 +1,17 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 
 :root {
-  --bg: #060907;
-  --panel: #0b120d;
-  --panel-raised: #101a13;
-  --scan: rgba(57, 255, 136, 0.035);
-  --text: #cdf5d8;
-  --text-muted: #5f8f6d;
-  --accent: #39ff88;
-  --accent-dim: #1c6b3c;
-  --error: #ff6b6b;
-  --border: #1c3324;
+  --bg: #f7f2ea;
+  --panel: #ffffff;
+  --panel-raised: #fbf7ef;
+  --dot: rgba(28, 22, 15, 0.06);
+  --text: #201a12;
+  --text-muted: #918a7c;
+  --accent: #d97757;
+  --accent-soft: #f3ddd2;
+  --success: #6f8f5c;
+  --error: #c2472f;
+  --border: #e9e1d2;
 }
 
 * {
@@ -22,10 +23,17 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: #030503;
+  background: var(--bg);
   color: var(--text);
+  font-family: "Inter", system-ui, sans-serif;
+  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+code,
+pre,
+.mono {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
-  background-image: repeating-linear-gradient(0deg, var(--scan) 0px, transparent 1px, transparent 3px);
 }
 
 * {
@@ -40,8 +48,12 @@ button {
   cursor: pointer;
 }
 
+input::placeholder {
+  color: var(--text-muted);
+}
+
 ::selection {
-  background: var(--accent-dim);
+  background: var(--accent-soft);
 }
 
 .scrollbar-thin::-webkit-scrollbar {
