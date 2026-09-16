@@ -59,7 +59,7 @@ export default function PythonRunner({ code }: { code: string }) {
             padding: "3px 8px",
             fontSize: 11,
             fontWeight: 600,
-            color: "#02150a",
+            color: "#2a1509",
           }}
         >
           {status === "loading" ? "loading..." : status === "running" ? "running..." : "run"}
