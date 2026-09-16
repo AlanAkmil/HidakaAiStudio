@@ -23,7 +23,7 @@ export default function CodeViewer({ files }: { files: CodeFile[] }) {
               padding: "4px 8px",
               border: "1px solid var(--border)",
               background: i === active ? "var(--accent)" : "var(--panel-raised)",
-              color: i === active ? "#02150a" : "var(--text)",
+              color: i === active ? "#2a1509" : "var(--text)",
             }}
           >
             {f.filename}
@@ -33,7 +33,7 @@ export default function CodeViewer({ files }: { files: CodeFile[] }) {
       <pre
         className="scrollbar-thin"
         style={{
-          background: "#020402",
+          background: "#1d1712",
           border: "1px solid var(--border)",
           padding: 10,
           fontSize: 11.5,
